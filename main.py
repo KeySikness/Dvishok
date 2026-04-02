@@ -4,6 +4,9 @@ import numpy as np
 import math
 import ctypes
 from Shader import Shader
+from Model import Model
+from Camera import Camera
+from pyglm import glm
 
 class Surface:
     def __init__(self, width, height):
@@ -15,8 +18,11 @@ class Surface:
             "shaders/fShader.glsl"
         )
 
-        self.vertices = np.array([
-            # positions        # colors
+        self.camera = Camera(glm.vec3(1, 0, 1), glm.vec3(0, 0, 0),0.1, 100)
+        self.model = Model(self.camera)
+        self.model.translate(glm.vec3(0,0,0))
+
+        self.vertices = np.array([    
              0.5,  0.5, 0.0,   1.0, 0.0, 0.0,  # top right (red)
              0.5, -0.5, 0.0,   0.0, 1.0, 0.0,  # bottom right (green)
             -0.5, -0.5, 0.0,   0.0, 0.0, 1.0,  # bottom left (blue)
@@ -43,13 +49,13 @@ class Surface:
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, self.EBO)
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, self.indices.nbytes, self.indices, GL_STATIC_DRAW)
 
-        stride = 6 * 4  # 6 float * 4 bytes
+        stride = 6 * 4  # 6 флоатов на 4 байта
 
         # позиции
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, ctypes.c_void_p(0))
         glEnableVertexAttribArray(0)
 
-        # цвета
+        #  (не перепутай пж_)
         glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, stride, ctypes.c_void_p(12))
         glEnableVertexAttribArray(1)
 
@@ -65,27 +71,29 @@ class Surface:
 
         time = glfw.get_time()
         angle = time  # скорость вращения
-        cos_a = math.cos(angle)
-        sin_a = math.sin(angle)
+        # cos_a = math.cos(angle)
+        # sin_a = math.sin(angle)
 
-        # model матрица (+вращение как пример для работы юниформ)
-        model = np.array([
-            [cos_a, -sin_a, 0.0, 0.0],
-            [sin_a, cos_a, 0.0, 0.0],
-            [0.0, 0.0, 1.0, 0.0],
-            [0.0, 0.0, 0.0, 1.0]
-        ], dtype=np.float32)
+        # # model матрица (+вращение как пример для работы юниформ)
+        # model = np.array(
+        #     [[cos_a, -sin_a, 0.0, 0.0],
+        #      [sin_a, cos_a, 0.0, 0.0],
+        #      [0.0, 0.0, 1.0, 0.0],
+        #      [0.0, 0.0, 0.0, 1.0]],
+        #     dtype=np.float32)
 
-        # cдвиг право+низ
-        model[3][0] = 0.5
-        model[3][1] = -0.5
+        self.shader.set_mat4("model", glm.value_ptr(self.model.getMVP()))
 
-        # масштаб
-        model[0][0] = 0.5
-        model[1][1] = 0.5
+        # # cдвиг право+низ
+        # model[3][0] = 0.5
+        # model[3][1] = -0.5
+        #
+        # # масштаб
+        # model[0][0] = 0.5
+        # model[1][1] = 0.5
 
-        model_loc = glGetUniformLocation(self.shader.program, "model")
-        glUniformMatrix4fv(model_loc, 1, GL_FALSE, model)
+        # model_loc = glGetUniformLocation(self.shader.program, "model")
+        # glUniformMatrix4fv(model_loc, 1, GL_FALSE, model)
 
         glBindVertexArray(self.VAO)
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, None)
@@ -145,7 +153,7 @@ class Engine:
 
 if __name__ == "__main__":
     engine = Engine()
-    screen = engine.display.set_mode(800, 600)
+    screen = engine.display.set_mode(1600, 900)
 
     while engine.running:
         engine.process_input()
