@@ -13,7 +13,7 @@ class Model:
         self.buildMVP()
 
     def translate(self, vector:glm.vec3):
-        translation = glm.translate(glm.vec3(vector.x, vector.y, 0))
+        translation = glm.translate(glm.vec3(vector.x, vector.y, vector.z))
         self.transform = translation * self.transform
 
         self.buildMVP()
@@ -48,7 +48,7 @@ class Model:
         return scale, orientation, translation, skew, perspective
     
     def buildMVP(self):
-        self.MVP = self.camera.getProjectionMatrix() * self.camera.rebuildViewMatrix() * self.getModel()
+        self.MVP = self.camera.getProjectionMatrix() * self.camera.getViewMatrix() * self.getModel()
     
     def getMVP(self):
         return self.MVP
