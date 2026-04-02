@@ -1,41 +1,9 @@
 import glfw
 from OpenGL.GL import *
 import numpy as np
-
-class Shader:
-    def __init__(self, vertex_src, fragment_src):
-        self.program = self._create_program(vertex_src, fragment_src)
-
-    def _compile_shader(self, src, shader_type):
-        shader = glCreateShader(shader_type)
-        glShaderSource(shader, src)
-        glCompileShader(shader)
-
-        if not glGetShaderiv(shader, GL_COMPILE_STATUS):
-            raise Exception(glGetShaderInfoLog(shader).decode())
-
-        return shader
-
-    def _create_program(self, v_src, f_src):
-        v = self._compile_shader(v_src, GL_VERTEX_SHADER)
-        f = self._compile_shader(f_src, GL_FRAGMENT_SHADER)
-
-        program = glCreateProgram()
-        glAttachShader(program, v)
-        glAttachShader(program, f)
-        glLinkProgram(program)
-
-        if not glGetProgramiv(program, GL_LINK_STATUS):
-            raise Exception(glGetProgramInfoLog(program))
-
-        glDeleteShader(v)
-        glDeleteShader(f)
-
-        return program
-
-    def use(self):
-        glUseProgram(self.program)
-
+import math
+import ctypes
+from Shader import Shader
 
 class Surface:
     def __init__(self, width, height):
@@ -43,30 +11,16 @@ class Surface:
         self.height = height
 
         self.shader = Shader(
-            """
-            #version 330 core
-            layout (location = 0) in vec3 aPos;
-            void main()
-            {
-                gl_Position = vec4(aPos, 1.0);
-            }
-            """,
-            """
-            #version 330 core
-            out vec4 FragColor;
-            uniform vec4 color;
-            void main()
-            {
-                FragColor = color;
-            }
-            """
+            "shaders/vShader.glsl",
+            "shaders/fShader.glsl"
         )
 
         self.vertices = np.array([
-             0.5,  0.5, 0.0,
-             0.5, -0.5, 0.0,
-            -0.5, -0.5, 0.0,
-            -0.5,  0.5, 0.0
+            # positions        # colors
+             0.5,  0.5, 0.0,   1.0, 0.0, 0.0,  # top right (red)
+             0.5, -0.5, 0.0,   0.0, 1.0, 0.0,  # bottom right (green)
+            -0.5, -0.5, 0.0,   0.0, 0.0, 1.0,  # bottom left (blue)
+            -0.5,  0.5, 0.0,   1.0, 1.0, 0.0   # top left (yellow)
         ], dtype=np.float32)
 
         self.indices = np.array([
@@ -89,25 +43,49 @@ class Surface:
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, self.EBO)
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, self.indices.nbytes, self.indices, GL_STATIC_DRAW)
 
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * 4, None)
+        stride = 6 * 4  # 6 float * 4 bytes
+
+        # позиции
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, ctypes.c_void_p(0))
         glEnableVertexAttribArray(0)
+
+        # цвета
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, stride, ctypes.c_void_p(12))
+        glEnableVertexAttribArray(1)
 
         glBindVertexArray(0)
 
     def fill(self, color):
-
-        # фон (glClearColor)
-        glClearColor(0.3, 0.2, 0.2, 1.0)
+        glClearColor(0.1, 0.1, 0.1, 1.0)
         glClear(GL_COLOR_BUFFER_BIT)
 
-        # wireframe режим
-        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
 
-        # рисуем прямоугольник
         self.shader.use()
 
-        color_loc = glGetUniformLocation(self.shader.program, "color")
-        glUniform4f(color_loc, *color)
+        time = glfw.get_time()
+        angle = time  # скорость вращения
+        cos_a = math.cos(angle)
+        sin_a = math.sin(angle)
+
+        # model матрица (+вращение как пример для работы юниформ)
+        model = np.array([
+            [cos_a, -sin_a, 0.0, 0.0],
+            [sin_a, cos_a, 0.0, 0.0],
+            [0.0, 0.0, 1.0, 0.0],
+            [0.0, 0.0, 0.0, 1.0]
+        ], dtype=np.float32)
+
+        # cдвиг право+низ
+        model[3][0] = 0.5
+        model[3][1] = -0.5
+
+        # масштаб
+        model[0][0] = 0.5
+        model[1][1] = 0.5
+
+        model_loc = glGetUniformLocation(self.shader.program, "model")
+        glUniformMatrix4fv(model_loc, 1, GL_FALSE, model)
 
         glBindVertexArray(self.VAO)
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, None)
