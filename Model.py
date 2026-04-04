@@ -35,7 +35,7 @@ class Model:
 
         self.buildMVP()
 
-    def getModel(self):
+    def getModel(self) -> glm.mat4:
         return self.transform * self.rotation * self.scaling
 
     def decompose(self):
@@ -46,9 +46,9 @@ class Model:
         perspective = glm.vec4()
         glm.decompose(self.getModel(), scale, orientation, translation, skew, perspective)
         return scale, orientation, translation, skew, perspective
-    
+
     def buildMVP(self):
         self.MVP = self.camera.getProjectionMatrix() * self.camera.getViewMatrix() * self.getModel()
-    
-    def getMVP(self):
+
+    def getMVP(self) -> glm.mat4:
         return self.MVP

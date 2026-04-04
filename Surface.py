@@ -7,18 +7,17 @@ from Camera import Camera
 from pyglm import glm
 
 class Surface:
-    def __init__(self, width, height):
+    def __init__(self, width: int, height: int, camera: Camera):
         self.width = width
         self.height = height
+        self.camera = camera
 
         self.shader = Shader(
             "shaders/vShader.glsl",
             "shaders/fShader.glsl"
         )
 
-        self.camera = Camera(glm.vec3(1, 0, 1), glm.vec3(0, 0, 0),0.1, 100)
         self.model = Model(self.camera)
-        self.model.translate(glm.vec3(0,0,0))
 
         self.vertices = np.array([
              0.5,  0.5, 0.0,   1.0, 0.0, 0.0,  # top right (red)
@@ -59,18 +58,18 @@ class Surface:
 
         glBindVertexArray(0)
 
-    def fill(self, color):
-        glClearColor(0.1, 0.1, 0.1, 1.0)
+    def fill(self, color: tuple):
+        glClearColor(color[0], color[1], color[2], color[3])
         glClear(GL_COLOR_BUFFER_BIT)
 
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
 
+        self.model.buildMVP()
+
         self.shader.use()
 
-        self.shader.set_mat4("model", glm.value_ptr(self.model.getMVP()))
 
-        # model_loc = glGetUniformLocation(self.shader.program, "model")
-        # glUniformMatrix4fv(model_loc, 1, GL_FALSE, model)
+        self.shader.set_mat4("model", glm.value_ptr(self.model.getMVP()))
 
         glBindVertexArray(self.VAO)
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, None)
