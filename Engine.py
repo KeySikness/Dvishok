@@ -11,21 +11,8 @@ class Engine:
         if glfw.get_key(self.display.window, glfw.KEY_ESCAPE) == glfw.PRESS:
             self.running = False
 
-        if glfw.get_key(self.display.window, glfw.KEY_UP) == glfw.PRESS:
-            self.display.move_camera(glm.vec3(0, -0.01, 0))  # вверх
-        if glfw.get_key(self.display.window, glfw.KEY_DOWN) == glfw.PRESS:
-            self.display.move_camera(glm.vec3(0, 0.01, 0))  # вниз
-        if glfw.get_key(self.display.window, glfw.KEY_LEFT) == glfw.PRESS:
-            self.display.move_camera(glm.vec3(-0.01, 0, 0))  # влево
-        if glfw.get_key(self.display.window, glfw.KEY_RIGHT) == glfw.PRESS:
-            self.display.move_camera(glm.vec3(0.01, 0, 0))  # вправо
-        if glfw.get_key(self.display.window, glfw.KEY_SPACE) == glfw.PRESS:
-            self.display.move_camera(glm.vec3(0, 0, -0.01))  # приблизить
-        if glfw.get_key(self.display.window, glfw.KEY_LEFT_SHIFT) == glfw.PRESS:
-            self.display.move_camera(glm.vec3(0, 0, 0.01))  # отдалить
-
-
     def update(self):
+        self.display.update()
         glfw.swap_buffers(self.display.window)
         glfw.poll_events()
 
