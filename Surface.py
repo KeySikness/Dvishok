@@ -58,19 +58,11 @@ class Surface:
 
         glBindVertexArray(0)
 
-    def fill(self, color: tuple):
-        glClearColor(color[0], color[1], color[2], color[3])
+    def fill(self, color):
+        glClearColor(*color)
         glClear(GL_COLOR_BUFFER_BIT)
-
-        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
-
-        self.model.buildMVP()
-
         self.shader.use()
-
-
         self.shader.set_mat4("model", glm.value_ptr(self.model.getMVP()))
-
         glBindVertexArray(self.VAO)
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, None)
         glBindVertexArray(0)

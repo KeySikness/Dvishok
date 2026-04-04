@@ -9,9 +9,17 @@ class Camera:
         self.fov = FOV
         self.minDrawRange = minDrawRange
         self.maxDrawRange = maxDrawRange
+        self._listeners = []
 
         self.rebuildViewMatrix()
         self.rebuildProjectionMatrix()
+
+    def add_listener(self, callback):
+        self._listeners.append(callback)
+
+    def _notify_change(self):
+        for cb in self._listeners:
+            cb()
 
     def getViewMatrix(self) -> glm.mat4:
         return self.ViewMatrix
@@ -24,9 +32,11 @@ class Camera:
 
     def rebuildViewMatrix(self):
         self.ViewMatrix = glm.lookAt(self.position, self.target, glm.vec3(0, 1, 0))
+        self._notify_change()
 
     def rebuildProjectionMatrix(self):
-        self.ProjectionMatrix = glm.perspective(self.fov, 16.0/9.0 , self.minDrawRange, self.maxDrawRange)
+        self.ProjectionMatrix = glm.perspective(self.fov, 16.0/9.0, self.minDrawRange, self.maxDrawRange)
+        self._notify_change()
 
     def changeFOV(self, newFOV: float):
         self.fov = newFOV
