@@ -48,4 +48,4 @@ class Shader:
 
     def set_mat4(self, name, mat):
         loc = glGetUniformLocation(self.program, name)
-        glUniformMatrix4fv(loc, 1, GL_TRUE, mat)
+        glUniformMatrix4fv(loc, 1, GL_FALSE, mat)
