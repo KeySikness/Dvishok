@@ -1,7 +1,8 @@
 from pyglm import glm
 
 class Camera:
-    def __init__(self, cameraPosition: glm.vec3, cameraTarget: glm.vec3, minDrawRange: float, maxDrawRange:float, FOV: float = glm.radians(45)):
+    def __init__(self, width, height, cameraPosition: glm.vec3, cameraTarget: glm.vec3, minDrawRange: float, maxDrawRange:float, FOV: float = glm.radians(45)):
+        self.OrthoMatrix = None
         self.ProjectionMatrix = None
         self.ViewMatrix = None
         self.position = cameraPosition
@@ -10,6 +11,8 @@ class Camera:
         self.minDrawRange = minDrawRange
         self.maxDrawRange = maxDrawRange
         self._listeners = []
+        self.width = width
+        self.height = height
 
         self.rebuildViewMatrix()
         self.rebuildProjectionMatrix()
@@ -35,7 +38,9 @@ class Camera:
         self._notify_change()
 
     def rebuildProjectionMatrix(self):
-        self.ProjectionMatrix = glm.perspective(self.fov, 16.0/9.0, self.minDrawRange, self.maxDrawRange)
+        # self.ProjectionMatrix = glm.perspective(self.fov, 16.0/9.0, self.minDrawRange, self.maxDrawRange)
+        self.OrthoMatrix = glm.ortho(0, self.width, self.height, 0)
+        self.ProjectionMatrix = self.OrthoMatrix
         self._notify_change()
 
     def changeFOV(self, newFOV: float):

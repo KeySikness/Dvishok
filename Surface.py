@@ -18,12 +18,15 @@ class Surface:
         )
 
         self.model = Model(self.camera)
+        self.model.scale(glm.vec3(800, 450, 0))
+        self.model.translate(glm.vec3(-400, 0, 0))
+
 
         self.vertices = np.array([
-             0.5,  0.5, 0.0,   1.0, 0.0, 0.0,  # top right (red)
-             0.5, -0.5, 0.0,   0.0, 1.0, 0.0,  # bottom right (green)
-            -0.5, -0.5, 0.0,   0.0, 0.0, 1.0,  # bottom left (blue)
-            -0.5,  0.5, 0.0,   1.0, 1.0, 0.0   # top left (yellow)
+             1,  1, 0.0,   1.0, 0.0, 0.0,  # top right (red)
+             1, 0.0, 0.0,   0.0, 1.0, 0.0,  # bottom right (green)
+            0.0, 0.0, 0.0,   0.0, 0.0, 1.0,  # bottom left (blue)
+            0.0,  1, 0.0,   1.0, 1.0, 0.0   # top left (yellow)
         ], dtype=np.float32)
 
         self.indices = np.array([
@@ -63,6 +66,7 @@ class Surface:
         glClear(GL_COLOR_BUFFER_BIT)
         self.shader.use()
         self.shader.set_mat4("model", glm.value_ptr(self.model.getMVP()))
+        print(self.model.getMVP())
         glBindVertexArray(self.VAO)
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, None)
         glBindVertexArray(0)

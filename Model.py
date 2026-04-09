@@ -65,7 +65,6 @@ class Model:
 
     def buildMVP(self):
         self.MVP = self.camera.getProjectionMatrix() * \
-                   self.camera.getViewMatrix() * \
                    self.getModel()
         self._mvp_dirty = False
 
