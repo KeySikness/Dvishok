@@ -6,10 +6,10 @@ from pyglm import glm
 
 class Display:
     def __init__(self):
+        self.camera = None
         self.window = None
         self.surface = None
-        self.camera = Camera(glm.vec3(0, 0, 10), glm.vec3(0, 0, 0), 0.1, 100)
-        self.move_camera(glm.vec3(3, 1, 0))
+
 
     def move_camera(self, delta: glm.vec3):
         self.camera.move(delta)
@@ -36,6 +36,8 @@ class Display:
             glViewport(0, 0, w, h)
 
         glfw.set_framebuffer_size_callback(self.window, resize)
+
+        self.camera = Camera(width, height, glm.vec3(0, 0, 10), glm.vec3(0, 0, 0), 0.1, 100)
 
         self.surface = Surface(width, height, self.camera)
         return self.surface
