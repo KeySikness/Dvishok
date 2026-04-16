@@ -11,7 +11,6 @@ class Model:
         self.scaling = scale if scale is not None else glm.mat4(1.0)
         self.camera = camera
         self._mvp_dirty = True
-        camera.add_listener(self._set_dirty)
         self.buildMVP()
 
     def _set_dirty(self):
@@ -30,7 +29,6 @@ class Model:
 
         self.buildMVP()
         self._set_dirty()
-
 
     def rotate_around_point(self, origin:glm.vec3, axis: glm.vec3, angle_rad: float):
         rot = glm.rotate(angle_rad, axis)
@@ -64,7 +62,7 @@ class Model:
         return scale, orientation, translation, skew, perspective
 
     def buildMVP(self):
-        self.MVP = self.camera.getProjectionMatrix() * \
+        self.MVP = self.camera.getOrthoMatrix() * \
                    self.getModel()
         self._mvp_dirty = False
 
@@ -72,3 +70,9 @@ class Model:
         if self._mvp_dirty:
             self.buildMVP()
         return self.MVP
+
+    def get_width(self):
+        return self.decompose()[0]
+
+    def get_height(self):
+        return self.decompose()[0]
