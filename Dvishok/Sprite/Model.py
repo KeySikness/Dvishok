@@ -1,10 +1,10 @@
 from pyglm import glm
 
-import Camera
+from Dvishok.Camera import Camera
 
 
 class Model:
-    def __init__(self, camera: Camera.Camera, transform: glm.mat4 = None, rotation: glm.mat4 = None, scale: glm.mat4 = None):
+    def __init__(self, camera: Camera, transform: glm.mat4 = None, rotation: glm.mat4 = None, scale: glm.mat4 = None):
         self.MVP = None
         self.transform = transform if transform is not None else glm.mat4(1.0)
         self.rotation = rotation if rotation is not None else glm.mat4(1.0)

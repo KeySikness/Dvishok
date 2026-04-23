@@ -3,9 +3,9 @@ import numpy as np
 import ctypes
 from OpenGL.GL import *
 
-from Model import Model
-from Surface import Surface
-from Shader import Shader
+from Dvishok.Sprite.Model import Model
+from Dvishok.Sprite.Surface import Surface
+from Dvishok.Shaders.Shader import Shader
 from pyglm import glm
 
 class SpriteSurface(Surface):
@@ -13,13 +13,16 @@ class SpriteSurface(Surface):
         super().__init__(camera, width, height)
         if color is None:
             self.color = [1, 0, 0]
+        else:
+            self.color = [c / 255.0 for c in color]
         self.width = width
         self.height = height
         self.camera = camera
 
+
         self.shader = Shader(
-            "shaders/vShader.glsl",
-            "shaders/fShader.glsl"
+            "Dvishok/Shaders/vShader.glsl",
+            "Dvishok/Shaders/fShader.glsl"
         )
 
         self.model = Model(self.camera)
@@ -27,10 +30,10 @@ class SpriteSurface(Surface):
         self.model.translate(glm.vec3(x, y, 0))
 
         self.vertices = np.array([
-            1, 1, 0.0, self.color[0], self.color[1], self.color[2],  # bottom right (red)
-            1, 0.0, 0.0, self.color[0], self.color[1], self.color[2],  # top right (green)
-            0.0, 0.0, 0.0, self.color[0], self.color[1], self.color[2],  # top left (blue)
-            0.0, 1, 0.0, self.color[0], self.color[1], self.color[2] # bottom left (yellow)
+            1, 1, 0.0, self.color[0], self.color[1], self.color[2],  # bottom right
+            1, 0.0, 0.0, self.color[0], self.color[1], self.color[2],  # top right
+            0.0, 0.0, 0.0, self.color[0], self.color[1], self.color[2],  # top left
+            0.0, 1, 0.0, self.color[0], self.color[1], self.color[2] # bottom left
         ], dtype=np.float32)
 
         self.indices = np.array([
@@ -39,7 +42,6 @@ class SpriteSurface(Surface):
         ], dtype=np.uint32)
 
         self._setup_buffers()
-
 
     def _setup_buffers(self):
         self.VAO = glGenVertexArrays(1)
@@ -66,8 +68,22 @@ class SpriteSurface(Surface):
 
         glBindVertexArray(0)
 
+    def set_color(self, color):
+        self.color = [c/255.0 for c in color]
+
+        self.vertices = np.array([
+            1, 1, 0.0, self.color[0], self.color[1], self.color[2],
+            1, 0.0, 0.0, self.color[0], self.color[1], self.color[2],
+            0.0, 0.0, 0.0, self.color[0], self.color[1], self.color[2],
+            0.0, 1, 0.0, self.color[0], self.color[1], self.color[2]
+        ], dtype=np.float32)
+
+        glBindBuffer(GL_ARRAY_BUFFER, self.VBO)
+        glBufferSubData(GL_ARRAY_BUFFER, 0, self.vertices.nbytes, self.vertices)
+        glBindBuffer(GL_ARRAY_BUFFER, 0)
+
     def update(self):
-        self.model.translate(glm.vec3(.01, .01, 0))
+        pass
 
     def draw(self):
         self.shader.use()

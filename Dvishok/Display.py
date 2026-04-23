@@ -1,10 +1,11 @@
 import glfw
 from OpenGL.GL import *
 
-from BackgroundSurface import BackgroundSurface
-from SpriteSurface import SpriteSurface
-from Surface import Surface
-from Camera import Camera
+from Dvishok.Sprite.BackgroundSurface import BackgroundSurface
+from Dvishok.Sprite.SpriteSurface import SpriteSurface
+from Dvishok.Sprite.Surface import Surface
+from Dvishok.Camera import Camera
+from Dvishok.Sprite.Group import Group
 from pyglm import glm
 
 class Display:
@@ -18,8 +19,15 @@ class Display:
     def set_caption(self, title: str):
         self.title = title
 
-    def blit(self, sprite: Surface):
-        self.sprites.append(sprite)
+    def blit(self, sprite):
+        if type(sprite) == Surface:
+            self.sprites.append(sprite)
+            return True
+        if type(sprite) == Group:
+            for s in sprite.get():
+                self.sprites.append(s)
+            return True
+        return False
 
     def update(self):
         for sprite in self.sprites:
@@ -27,6 +35,7 @@ class Display:
             sprite.draw()
 
         self.sprites = []
+
     def set_mode(self, width: int, height: int):
         if not glfw.init():
             raise Exception("GLFW init failed")

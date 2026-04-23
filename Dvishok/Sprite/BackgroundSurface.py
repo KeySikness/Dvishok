@@ -1,5 +1,4 @@
-# background_surface.py
-from Surface import Surface
+from Dvishok.Sprite.Surface import Surface
 from OpenGL.GL import *
 
 class BackgroundSurface(Surface):

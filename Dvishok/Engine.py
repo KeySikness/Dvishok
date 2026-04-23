@@ -1,14 +1,14 @@
 import glfw
 from pyglm import glm
-from Display import Display
+from Dvishok.Display import Display
 
 class Engine:
     def __init__(self):
         self.display = Display()
         self.running = True
 
-    def process_input(self):
-        if glfw.get_key(self.display.window, glfw.KEY_ESCAPE) == glfw.PRESS:
+    def get_key(self, key):
+        if glfw.get_key(self.display.window, key) == glfw.PRESS:
             self.running = False
 
     def update(self):
@@ -23,4 +23,5 @@ class Engine:
         return self.display
 
     def quit(self):
+        self.running = False
         glfw.terminate()
