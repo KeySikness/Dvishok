@@ -4,7 +4,7 @@ from Dvishok.Camera import Camera
 
 
 class Model:
-    def __init__(self, camera: Camera, transform: glm.mat4 = None, rotation: glm.mat4 = None, scale: glm.mat4 = None):
+    def __init__(self, camera: Camera, transform: glm.mat4 = None, rotation: glm.mat4 = None, scale: glm.mat4 = None) -> None:
         self.MVP = None
         self.transform = transform if transform is not None else glm.mat4(1.0)
         self.rotation = rotation if rotation is not None else glm.mat4(1.0)
@@ -16,14 +16,14 @@ class Model:
     def _set_dirty(self):
         self._mvp_dirty = True
 
-    def translate(self, vector:glm.vec3):
+    def translate_model(self, vector:glm.vec3):
         translation = glm.translate(glm.vec3(vector.x, vector.y, vector.z))
         self.transform = translation * self.transform
 
         self.buildMVP()
         self._set_dirty()
 
-    def rotate(self, axis: glm.vec3, angle_rad: float):
+    def rotate_model(self, axis: glm.vec3, angle_rad: float):
         rot = glm.rotate(angle_rad, axis)
         self.rotation = rot * self.rotation
 
@@ -42,7 +42,7 @@ class Model:
         self.buildMVP()
         self._set_dirty()
 
-    def scale(self, vector:glm.vec3):
+    def scale_model(self, vector:glm.vec3):
         scale = glm.scale(glm.vec3(vector.x, vector.y, 1))
         self.scaling = scale * self.scaling
 

@@ -23,6 +23,7 @@ class Display:
         if type(sprite) == Surface:
             self.sprites.append(sprite)
             return True
+
         if type(sprite) == Group:
             for s in sprite.get():
                 self.sprites.append(s)

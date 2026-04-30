@@ -6,6 +6,8 @@ from OpenGL.GL import *
 from Dvishok.Sprite.Model import Model
 from Dvishok.Sprite.Surface import Surface
 from Dvishok.Shaders.Shader import Shader
+from Dvishok.Sprite.Rect import Rect
+
 from pyglm import glm
 
 class SpriteSurface(Surface):
@@ -25,9 +27,10 @@ class SpriteSurface(Surface):
             "Dvishok/Shaders/fShader.glsl"
         )
 
-        self.model = Model(self.camera)
-        self.model.scale(glm.vec3(self.width, self.height, 0))
-        self.model.translate(glm.vec3(x, y, 0))
+        self.rect = Rect(self.camera)
+        self.rect.scale(glm.vec3(self.width, self.height, 0))
+        self.rect.x += x
+        self.rect.y += y
 
         self.vertices = np.array([
             1, 1, 0.0, self.color[0], self.color[1], self.color[2],  # bottom right
@@ -87,7 +90,17 @@ class SpriteSurface(Surface):
 
     def draw(self):
         self.shader.use()
-        self.shader.set_mat4("model", glm.value_ptr(self.model.getMVP()))
+        self.shader.set_mat4("model", glm.value_ptr(self.rect.getMVP()))
         glBindVertexArray(self.VAO)
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, None)
         glBindVertexArray(0)
+
+    def collide(self, obj):
+        points = [obj.rect.top_left, obj.rect.top_right, obj.rect.bottom_left, obj.rect.bottom_right]
+
+        if any(self.collide_point(p) for p in points):
+            return True
+        return False
+
+    def collide_point(self, obj):
+        return (self.rect.x <= obj[0] <= self.rect.x+self.rect.width) and (self.rect.y <= obj[1] <= self.rect.y+self.rect.height)
