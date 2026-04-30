@@ -1,16 +1,26 @@
-from Engine import Engine
-from pyglm import glm
+import glfw
 
+from Dvishok.Engine import Engine
+from Dvishok.Sprite.Color import COLORS
+from Dvishok.Sprite.Group import Group
+
+from Dvishok.Sprite.SpriteSurface import SpriteSurface
 
 if __name__ == "__main__":
     engine = Engine()
-    screen = engine.display.set_mode(1600, 900)
+    screen = engine.display.set_mode(1920, 1080)
+    sprite1 = SpriteSurface(engine.display.camera, 200, 200, x=0, y=100, color=COLORS["black"])
+    sprite2 = SpriteSurface(engine.display.camera, 200, 200, x=500, y=100)
+    print(sprite1.collide(sprite2))
+    group = Group(sprite1, sprite2)
+
 
     while engine.running:
-        engine.process_input()
+        if engine.get_key(glfw.KEY_ESCAPE):
+            engine.quit()
 
-        screen.fill((1.0, 0.8, 0.2, 1.0))
+        screen.draw()
+        engine.display.blit(group)
 
         engine.update()
 
-    engine.quit()
