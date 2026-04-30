@@ -10,10 +10,8 @@ class Display:
         self.window = None
         self.surface = None
 
-
     def move_camera(self, delta: glm.vec3):
         self.camera.move(delta)
-
 
     def set_mode(self, width: int, height: int):
         if not glfw.init():
@@ -37,7 +35,20 @@ class Display:
 
         glfw.set_framebuffer_size_callback(self.window, resize)
 
+        glEnable(GL_BLEND)
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+
         self.camera = Camera(width, height, glm.vec3(0, 0, 10), glm.vec3(0, 0, 0), 0.1, 100)
 
         self.surface = Surface(width, height, self.camera)
         return self.surface
+
+    def update(self):
+        glfw.swap_buffers(self.window)
+        glfw.poll_events()
+
+    def running(self):
+        return not glfw.window_should_close(self.window)
+
+    def quit(self):
+        glfw.terminate()
