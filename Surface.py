@@ -6,33 +6,38 @@ from Model import Model
 from Camera import Camera
 from pyglm import glm
 from Texture import Texture
+from Font import Font
+
 
 class Surface:
     def __init__(self, width: int, height: int, camera: Camera):
         self.width = width
         self.height = height
         self.camera = camera
-        self.texture = Texture("assets/MainIcon.jpg")
+        self.texture = Texture("assets/images/MainIcon.jpg")
 
         self.shader = Shader(
-            "shaders/vShader.glsl",
-            "shaders/fShader.glsl"
+            "shaders/surface/vShader.glsl",
+            "shaders/surface/fShader.glsl"
+        )
+
+        self.font = Font(
+            "assets/fonts/PublicPixel-rv0pA.ttf",
+            32
+        )
+
+        self.text_surface = self.font.render(
+            "Hello world я фиг знает",
+            (1.0, 1.0, 1.0)
         )
 
         self.model = Model(self.camera)
-        self.model.scale(glm.vec3(800, 450, 0))
-        self.model.translate(glm.vec3(-400, 0, 0))
-
 
         self.vertices = np.array([
-            # top right (red)
-             1.5,  1.5, 0.0,     1.0, 0.0, 0.0,    1.0,1.0,
-            # bottom right (green)
-             1.5, 0.5, 0.0,    0.0, 1.0, 0.0,    1.0,0.0,
-            # bottom left (blue)
-            0.5, 0.5, 0.0,   0.0, 0.0, 1.0,    0.0,0.0,
-            # top left (yellow)
-            0.5,  1.5, 0.0,    1.0, 1.0, 0.0,    0.0,1.0
+             800, 450, 0.0,     1.0, 0.0, 0.0,    1.0,1.0,
+             800, 0,   0.0,     0.0, 1.0, 0.0,    1.0,0.0,
+             0,   0,   0.0,     0.0, 0.0, 1.0,    0.0,0.0,
+             0,   450, 0.0,     1.0, 1.0, 0.0,    0.0,1.0
         ], dtype=np.float32)
 
         self.indices = np.array([
@@ -75,12 +80,41 @@ class Surface:
         glClearColor(*color)
         glClear(GL_COLOR_BUFFER_BIT)
 
+    def blit(self, text_surface, x, y):
+        text_surface.font.draw(
+            text_surface,
+            x,
+            y,
+            self.width,
+            self.height
+        )
+
     def draw(self):
         self.shader.use()
+
+        glActiveTexture(GL_TEXTURE0)
+
         self.texture.bind()
-        glUniform1i(glGetUniformLocation(self.shader.program, "texture1"), 0)
-        self.shader.set_mat4("model", glm.value_ptr(self.model.getMVP()))
-        print(self.model.getMVP())
+
+        glUniform1i(
+            glGetUniformLocation(self.shader.program, "texture1"),
+            0
+        )
+
+        self.shader.set_mat4(
+            "model",
+            glm.value_ptr(self.model.getMVP())
+        )
+
         glBindVertexArray(self.VAO)
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, None)
+
+        glDrawElements(
+            GL_TRIANGLES,
+            6,
+            GL_UNSIGNED_INT,
+            None
+        )
+
         glBindVertexArray(0)
+
+        self.blit(self.text_surface, 100, 100)
