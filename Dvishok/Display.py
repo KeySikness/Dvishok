@@ -1,10 +1,8 @@
 import glfw
 from OpenGL.GL import *
-
-from Dvishok.Sprite.BackgroundSurface import BackgroundSurface
 from Dvishok.Sprite.SpriteSurface import SpriteSurface
-from Dvishok.Sprite.Surface import Surface
 from Dvishok.Camera import Camera
+from Dvishok.Sprite.Surface import Surface
 from Dvishok.Sprite.Group import Group
 from pyglm import glm
 
@@ -13,11 +11,6 @@ class Display:
         self.camera = None
         self.window = None
         self.surface = None
-        self.title = "Engine team is GOAT"
-        self.sprites = []
-
-    def set_caption(self, title: str):
-        self.title = title
 
     def blit(self, sprite):
         if type(sprite) == Surface:
@@ -44,7 +37,7 @@ class Display:
         glfw.window_hint(glfw.CONTEXT_VERSION_MAJOR, 3)
         glfw.window_hint(glfw.CONTEXT_VERSION_MINOR, 3)
 
-        self.window = glfw.create_window(width, height, self.title, None, None)
+        self.window = glfw.create_window(width, height, "Engine", None, None)
 
         if not self.window:
             glfw.terminate()
@@ -59,7 +52,20 @@ class Display:
 
         glfw.set_framebuffer_size_callback(self.window, resize)
 
+        glEnable(GL_BLEND)
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+
         self.camera = Camera(width, height)
-        background = BackgroundSurface(self.camera, width, height, color=(1.0, 0.8, 0.2, 1.0))
-        self.sprites.append(background)
-        return background
+
+        self.surface = SpriteSurface(width, height, self.camera)
+        return self.surface
+
+    def update(self):
+        glfw.swap_buffers(self.window)
+        glfw.poll_events()
+
+    def running(self):
+        return not glfw.window_should_close(self.window)
+
+    def quit(self):
+        glfw.terminate()

@@ -7,12 +7,12 @@ class Engine:
         self.display = Display()
         self.running = True
 
-    def get_key(self, key):
-        if glfw.get_key(self.display.window, key) == glfw.PRESS:
+    def process_input(self):
+        if glfw.get_key(self.display.window, glfw.KEY_ESCAPE) == glfw.PRESS:
             self.running = False
 
+
     def update(self):
-        self.display.update()
         glfw.swap_buffers(self.display.window)
         glfw.poll_events()
 
@@ -23,5 +23,4 @@ class Engine:
         return self.display
 
     def quit(self):
-        self.running = False
         glfw.terminate()
