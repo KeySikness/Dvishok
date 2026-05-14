@@ -1,9 +1,7 @@
 import glfw
 from OpenGL.GL import *
-from Dvishok.Sprite.Sprite.SpriteSurface import SpriteSurface
 from Dvishok.Sprite.Sprite.BackgroundSurface import BackgroundSurface
 from Dvishok.Camera import Camera
-from Dvishok.Sprite.Color import COLORS
 
 class Display:
     def __init__(self):

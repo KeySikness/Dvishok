@@ -3,5 +3,5 @@ class TextSurface:
         self.font = font
         self.text = text
         self.color = color
-        self.x = text
+        self.x = x
         self.y = y

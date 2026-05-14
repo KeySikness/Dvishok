@@ -1,13 +1,7 @@
 from Dvishok.Sprite.Sprite.SpriteSurface import SpriteSurface
 from OpenGL.GL import *
-import numpy as np
 import ctypes
-from Dvishok.Shaders.Shader import Shader
-from Dvishok.Camera import Camera
 from pyglm import glm
-from Dvishok.Sprite.Texture import Texture
-from Dvishok.Sprite.Sprite.Surface import Surface
-from Dvishok.Sprite.Rect import Rect
 
 
 class Image(SpriteSurface):

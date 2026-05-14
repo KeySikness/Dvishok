@@ -1,5 +1,4 @@
 from Dvishok.Sprite.Font.TextSurface import TextSurface
-from Dvishok.Sprite.Image.ImageSurface import ImageSurface
 
 
 class Surface:
@@ -24,8 +23,8 @@ class Surface:
                 self.width,
                 self.height
             )
-        if isinstance(obj, ImageSurface):
-            obj.image.draw(obj, x, y, self.width, self.height)
+        # if isinstance(obj, ImageSurface):
+        #     obj.image.draw(obj, x, y, self.width, self.height)
         if isinstance(obj, SpriteSurface):
             obj.draw()
 

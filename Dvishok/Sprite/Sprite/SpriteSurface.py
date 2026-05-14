@@ -4,7 +4,6 @@ import ctypes
 from Dvishok.Shaders.Shader import Shader
 from Dvishok.Camera import Camera
 from pyglm import glm
-from Dvishok.Sprite.Texture import Texture
 from Dvishok.Sprite.Sprite.Surface import Surface
 from Dvishok.Sprite.Rect import Rect
 

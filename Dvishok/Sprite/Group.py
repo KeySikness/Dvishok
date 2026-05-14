@@ -1,4 +1,5 @@
 from Dvishok.Sprite.Sprite.Surface import Surface
+from Dvishok.Sprite.Sprite.SpriteSurface import SpriteSurface
 
 
 class Group:
@@ -10,11 +11,12 @@ class Group:
             for sprite in self.sprites:
                 sprite.update()
         else:
-            pass
+            for sprite in self.sprites:
+                sprite.update(*args)
 
-    def blit(self):
+    def draw(self, screen):
         for sprite in self.sprites:
-            sprite.blit()
+            screen.blit(sprite, sprite.x, sprite.y)
 
     def get_by_id(self, obj_id):
         return self.sprites[obj_id]
@@ -24,14 +26,16 @@ class Group:
 
     def add(self, *obj):
         for sprite in obj:
-            self.sprites.append(sprite)
+            if isinstance(sprite, SpriteSurface):
+                self.sprites.append(sprite)
+            else:
+                pass
 
     def pop(self, element):
-        if type(element) == int:
+        if isinstance(element, int):
             self.sprites.pop(element)
             return True
-        if type(element) == Surface:
+        if isinstance(element, Surface):
             self.sprites.remove(element)
             return True
-        else:
-            return False
+        return False
