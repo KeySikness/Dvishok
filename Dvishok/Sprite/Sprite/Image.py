@@ -1,50 +1,18 @@
+from Dvishok.Sprite.Sprite.SpriteSurface import SpriteSurface
 from OpenGL.GL import *
 import numpy as np
 import ctypes
 from Dvishok.Shaders.Shader import Shader
-from Dvishok.Sprite.Model import Model
 from Dvishok.Camera import Camera
 from pyglm import glm
 from Dvishok.Sprite.Texture import Texture
-from Dvishok.Sprite.Font.Font import Font
-from Dvishok.Sprite.Surface import Surface
+from Dvishok.Sprite.Sprite.Surface import Surface
 from Dvishok.Sprite.Rect import Rect
 
 
-class SpriteSurface(Surface):
-    def __init__(self, width: int, height: int, camera: Camera, color = None, x=0, y=0):
-        super().__init__(camera, width, height, x, y)
-        self.width = width
-        self.height = height
-        self.camera = camera
-        if color is None:
-            self.color = [1, 0, 0]
-        else:
-            self.color = [c / 255.0 for c in color]
-        self.texture = Texture("Dvishok/Assets/images/MainIcon.jpg")
-
-        self.shader = Shader(
-            "Dvishok/Shaders/surface/vShader.glsl",
-            "Dvishok/Shaders/surface/fShader.glsl"
-        )
-
-        self.rect = Rect(self.camera)
-        self.rect.scale(glm.vec3(self.width, self.height, 0))
-        self.rect.x += x
-        self.rect.y += y
-
-        self.vertices = np.array([
-             1, 1, 0.0,     self.color[0], self.color[1], self.color[2],    1.0,1.0,
-             1, 0.0, 0.0,     self.color[0], self.color[1], self.color[2],    1.0,0.0,
-             0.0, 0.0, 0.0,     self.color[0], self.color[1], self.color[2],    0.0,0.0,
-             0.0, 1, 0.0,     self.color[0], self.color[1], self.color[2],    0.0,1.0
-        ], dtype=np.float32)
-
-        self.indices = np.array([
-            0, 1, 3,
-            1, 2, 3
-        ], dtype=np.uint32)
-
+class Image(SpriteSurface):
+    def __init__(self, width, height, camera, texture, x=0, y=0):
+        super().__init__(width, height, camera, texture=texture, x=x, y=y)
         self._setup_buffers()
 
     def _setup_buffers(self):
@@ -76,10 +44,6 @@ class SpriteSurface(Surface):
 
         glBindVertexArray(0)
 
-    def fill(self, color):
-        glClearColor(*color)
-        glClear(GL_COLOR_BUFFER_BIT)
-
     def draw(self):
         self.shader.use()
 
@@ -107,6 +71,3 @@ class SpriteSurface(Surface):
         )
 
         glBindVertexArray(0)
-
-    def set_color(self, color):
-        self.color = color

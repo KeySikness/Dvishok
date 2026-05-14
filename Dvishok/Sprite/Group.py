@@ -1,4 +1,4 @@
-from Dvishok.Sprite.Surface import Surface
+from Dvishok.Sprite.Sprite.Surface import Surface
 
 
 class Group:

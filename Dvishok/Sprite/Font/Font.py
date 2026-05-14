@@ -78,14 +78,14 @@ class Font:
 
         return glyph
 
-    def render(self, text, color=(1, 1, 1)):
+    def render(self, text, color=(1, 1, 1), x=0, y=0):
         """ Возвращает объект TextSurface, который является обёрткой для текста, фонта и цвета"""
-        return TextSurface(self, text, color)
+        return TextSurface(self, text, color, x=x, y=y)
 
     def draw(self, text_surface, x, y, width, height):
         self.shader.use()
 
-        projection = glm.ortho(0, width, height, 0)
+        projection = glm.ortho(0.0, float(width), float(height), 0.0)
 
         glUniformMatrix4fv(
             glGetUniformLocation(self.shader.program, "projection"),

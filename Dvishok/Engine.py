@@ -1,5 +1,4 @@
 import glfw
-from pyglm import glm
 from Dvishok.Display import Display
 
 class Engine:

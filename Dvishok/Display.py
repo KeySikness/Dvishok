@@ -1,34 +1,15 @@
 import glfw
 from OpenGL.GL import *
-from Dvishok.Sprite.SpriteSurface import SpriteSurface
+from Dvishok.Sprite.Sprite.SpriteSurface import SpriteSurface
+from Dvishok.Sprite.Sprite.BackgroundSurface import BackgroundSurface
 from Dvishok.Camera import Camera
-from Dvishok.Sprite.Surface import Surface
-from Dvishok.Sprite.Group import Group
-from pyglm import glm
+from Dvishok.Sprite.Color import COLORS
 
 class Display:
     def __init__(self):
         self.camera = None
         self.window = None
         self.surface = None
-
-    def blit(self, sprite):
-        if type(sprite) == Surface:
-            self.sprites.append(sprite)
-            return True
-
-        if type(sprite) == Group:
-            for s in sprite.get():
-                self.sprites.append(s)
-            return True
-        return False
-
-    def update(self):
-        for sprite in self.sprites:
-            sprite.update()
-            sprite.draw()
-
-        self.sprites = []
 
     def set_mode(self, width: int, height: int):
         if not glfw.init():
@@ -57,7 +38,7 @@ class Display:
 
         self.camera = Camera(width, height)
 
-        self.surface = SpriteSurface(width, height, self.camera)
+        self.surface = BackgroundSurface(self.camera, width, height)
         return self.surface
 
     def update(self):

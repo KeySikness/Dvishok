@@ -1,12 +1,3 @@
-from OpenGL.GL import *
-import numpy as np
-import ctypes
-from Dvishok.Shaders.Shader import Shader
-from Dvishok.Sprite.Model import Model
-from Dvishok.Camera import Camera
-from pyglm import glm
-from Dvishok.Sprite.Texture import Texture
-from Dvishok.Sprite.Font import Font
 from Dvishok.Sprite.Font.TextSurface import TextSurface
 from Dvishok.Sprite.Image.ImageSurface import ImageSurface
 
@@ -24,7 +15,7 @@ class Surface:
 
     def blit(self, obj, x, y):
         """Отображает переданный объект по определенным для него правилам """
-        from Dvishok.Sprite.SpriteSurface import SpriteSurface
+        from Dvishok.Sprite.Sprite.SpriteSurface import SpriteSurface
         if isinstance(obj, TextSurface):
             obj.font.draw(
                 obj,
@@ -36,7 +27,9 @@ class Surface:
         if isinstance(obj, ImageSurface):
             obj.image.draw(obj, x, y, self.width, self.height)
         if isinstance(obj, SpriteSurface):
-            pass
+            obj.draw()
+
+    def set_color(self, color):
         pass
 
     def update(self):
