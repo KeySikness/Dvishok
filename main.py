@@ -1,9 +1,13 @@
 from Dvishok.Engine import Engine
 from Dvishok.Sprite.Font.Font import Font
-from Dvishok.Sprite.Image.Image import Image
+from Dvishok.Sprite.Sprite.Image import Image
+from Dvishok.Sprite.Texture import Texture
+from Dvishok.Sprite.Group import Group
+
+
 if __name__ == "__main__":
     engine = Engine()
-    screen = engine.display.set_mode(1920, 1080)
+    screen = engine.display.set_mode(1600, 900)
 
     font1 = Font("Dvishok/Assets/fonts/PublicPixel-rv0pA.ttf", 48)
     font2 = Font("Dvishok/Assets/fonts/PublicPixel-rv0pA.ttf", 30)
@@ -11,25 +15,27 @@ if __name__ == "__main__":
     text1 = font1.render(
     "Фуораов крутой текст урааа",
     (0.7, 1.0, 0.7),
+        x = 200,
+        y = 300
     )
 
     text2 = font2.render(
-        "абвгдежзийклмнопрстуфхцчыьъщшэюя",
-        (0.1, 0.5, 0.8)
+        "абвгдеёжзийклмнопрстуфхцчыьъщшэюя",
+        (0.1, 0.5, 0.8),
+        x = 400,
+        y = 500
     )
 
-    img = Image("Dvishok/Assets/images/MainIcon.jpg").render()
+    img = Image(600, 600, engine.get_display().camera, texture=Texture("Dvishok/Assets/images/MainIcon.jpg"), x = 0, y = 0)
+
+    group = Group(img, text1, text2)
 
     while engine.running:
         engine.process_input()
 
-        screen.fill((0.3, 0.2, 0.2, 1.0))
-
         screen.draw()
 
-        screen.blit(text1, 200, 300)
-        screen.blit(text2, 400, 500)
-
+        group.draw(screen)
 
         engine.update()
 
