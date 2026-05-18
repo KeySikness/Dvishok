@@ -3,11 +3,13 @@ from Dvishok.Sprite.Font.Font import Font
 from Dvishok.Sprite.Sprite.Image import Image
 from Dvishok.Sprite.Texture import Texture
 from Dvishok.Sprite.Group import Group
+from Dvishok.Events.EventType import EventType
 
 
 if __name__ == "__main__":
     engine = Engine()
     screen = engine.display.set_mode(1600, 900)
+    engine.setup_callback()
 
     font1 = Font("Dvishok/Assets/fonts/PublicPixel-rv0pA.ttf", 48)
     font2 = Font("Dvishok/Assets/fonts/PublicPixel-rv0pA.ttf", 30)
@@ -32,6 +34,10 @@ if __name__ == "__main__":
 
     while engine.running:
         engine.process_input()
+        for event in engine.get_events():
+            if event.type == EventType.KEYDOWN:
+                if event.dict["name"] == "ESCAPE":
+                    engine.stop()
 
         screen.draw()
 
