@@ -2,6 +2,7 @@ import glfw
 from Dvishok.Display import Display
 from Dvishok.Events.EventType import EventType
 from Dvishok.Events.Event import Event
+from Dvishok.Sprite.Audio import AudioEngine
 
 class Engine:
     _SPECIAL_KEYS = {
@@ -47,6 +48,7 @@ class Engine:
         self.mouse_delta_y = 0.0
         self.mouse_locked = False
         self.mouse_buttons = [False, False, False]
+        # AudioEngine.init()
 
     def key_callback(self, window, key, scancode, action, mods):
         name = glfw.get_key_name(key, scancode)
