@@ -1,15 +1,19 @@
 from Dvishok.Engine import Engine
 from Dvishok.Sprite.Font.Font import Font
-from Dvishok.Sprite.Sprite.Image import Image
 from Dvishok.Sprite.Sprite.SpriteSurface import SpriteSurface
 from Dvishok.Sprite.Texture import Texture
 from Dvishok.Sprite.Group import Group
 from Dvishok.Events.EventType import EventType
+from Dvishok.Sprite.Audio.Music import Music
+from Dvishok.Sprite.Audio.Sound import Sound
+from Dvishok.Sprite.Audio.AudioEngine import AudioEngine
+
 
 if __name__ == "__main__":
     engine = Engine()
     screen = engine.display.set_mode(1600, 900)
     engine.setup_callback()
+    AudioEngine.init()
 
     font1 = Font("Dvishok/Assets/fonts/PublicPixel-rv0pA.ttf", 48)
     font2 = Font("Dvishok/Assets/fonts/PublicPixel-rv0pA.ttf", 30)
@@ -35,8 +39,24 @@ if __name__ == "__main__":
         y=260
     )
 
-    alpha_square1 = SpriteSurface(200, 200, engine.get_display().camera, color=(255,0,0,128), x=500, y=200)
-    alpha_square2 = SpriteSurface(200, 200, engine.get_display().camera, color=(0,255,0,128), x=600, y=300)
+    alpha_square1 = SpriteSurface(
+        200,
+        200,
+        engine.get_display().camera,
+        color=(255, 0, 0, 128),
+        x=500,
+        y=200
+    )
+
+    alpha_square2 = SpriteSurface(
+        200,
+        200,
+        engine.get_display().camera,
+        color=(0, 255, 0, 128),
+        x=600,
+        y=300
+    )
+
     alpha_texture_square = SpriteSurface(
         400,
         250,
@@ -56,16 +76,31 @@ if __name__ == "__main__":
         alpha_texture_square,
     )
 
+    Music.load("Dvishok/Assets/audio/your-best-nightmare.mp3")
+    Music.set_volume(0.4)
+    Music.play(-1)
+
+    ohyes = Sound("Dvishok/Assets/audio/oh-yes-undertale.mp3")
+    ohyes.set_volume(0.7)
+    ohyes.play(-1)
+
     while engine.running:
+
         engine.process_input()
 
         for event in engine.get_events():
+
             if event.type == EventType.KEYDOWN:
+
                 if event.dict["name"] == "ESCAPE":
                     engine.stop()
 
         screen.draw()
         group.draw(screen)
+
         engine.update()
+
+    Music.stop()
+    ohyes.stop()
 
     engine.quit()
