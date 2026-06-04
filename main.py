@@ -7,6 +7,7 @@ from Dvishok.Events.EventType import EventType
 from Dvishok.Sprite.Audio.Music import Music
 from Dvishok.Sprite.Audio.Sound import Sound
 from Dvishok.Sprite.Audio.AudioEngine import AudioEngine
+from Dvishok.Clock import Clock
 
 
 if __name__ == "__main__":
@@ -84,7 +85,11 @@ if __name__ == "__main__":
     ohyes.set_volume(0.7)
     ohyes.play(-1)
 
+    clock = Clock()
+
     while engine.running:
+
+        # delta_time = clock.tick_seconds(60)
 
         engine.process_input()
 
@@ -99,6 +104,7 @@ if __name__ == "__main__":
         group.draw(screen)
 
         engine.update()
+        clock.tick(60)
 
     Music.stop()
     ohyes.stop()
